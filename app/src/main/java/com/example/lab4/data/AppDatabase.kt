@@ -4,22 +4,22 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.lab4.data.dao.InsuranceServiceDao
-import com.example.lab4.data.dao.ReviewDao
-import com.example.lab4.data.dao.UserDao
-import com.example.lab4.data.model.InsuranceService
-import com.example.lab4.data.model.Review
-import com.example.lab4.data.model.User
+import androidx.room.TypeConverters
+import com.example.lab4.data.dao.CartDao
+import com.example.lab4.data.dao.ServiceDao
+import com.example.lab4.data.model.CartItem
+import com.example.lab4.data.model.Service
+import com.example.lab4.data.model.ServiceCategory
 
 @Database(
-    entities = [User::class, InsuranceService::class, Review::class],
+    entities = [Service::class, CartItem::class],
     version = 1,
     exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
-    abstract fun insuranceServiceDao(): InsuranceServiceDao
-    abstract fun reviewDao(): ReviewDao
+    abstract fun serviceDao(): ServiceDao
+    abstract fun cartDao(): CartDao
 
     companion object {
         @Volatile
@@ -30,7 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "insurance_marketplace_db"
+                    "app_database"
                 )
                 .fallbackToDestructiveMigration()
                 .build()
