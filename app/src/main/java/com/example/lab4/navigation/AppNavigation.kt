@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.lab4.data.model.Service
 import com.example.lab4.ui.screens.CartScreen
+import com.example.lab4.ui.screens.CommentsScreen
 import com.example.lab4.ui.screens.LoginScreen
 import com.example.lab4.ui.screens.ProfileScreen
 import com.example.lab4.ui.screens.RegisterScreen
@@ -15,6 +16,7 @@ import com.example.lab4.ui.screens.ServiceDetailScreen
 import com.example.lab4.ui.screens.ServiceListScreen
 import com.example.lab4.ui.viewmodel.CartViewModel
 import com.example.lab4.ui.viewmodel.ServiceViewModel
+import kotlinx.coroutines.launch
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -25,6 +27,9 @@ sealed class Screen(val route: String) {
     }
     object Cart : Screen("cart")
     object Profile : Screen("profile")
+    object Comments : Screen("comments/{serviceId}") {
+        fun createRoute(serviceId: Long) = "comments/$serviceId"
+    }
 }
 
 @Composable
@@ -88,6 +93,9 @@ fun AppNavigation(
                 cartViewModel = cartViewModel,
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onCommentsClick = {
+                    navController.navigate(Screen.Comments.createRoute(serviceId))
                 }
             )
         }
@@ -107,6 +115,21 @@ fun AppNavigation(
                     navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.ServiceList.route) { inclusive = true }
                     }
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Screen.Comments.route) { backStackEntry ->
+            val serviceId = backStackEntry.arguments?.getString("serviceId")?.toLongOrNull() ?: return@composable
+            val comments by serviceViewModel.getCommentsForService(serviceId).collectAsState(initial = emptyList())
+            
+            CommentsScreen(
+                comments = comments,
+                onAddComment = { text, rating ->
+                    serviceViewModel.addComment(serviceId, text, rating.toFloat())
                 },
                 onBackClick = {
                     navController.popBackStack()
