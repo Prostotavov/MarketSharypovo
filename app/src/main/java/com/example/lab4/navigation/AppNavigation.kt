@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import com.example.lab4.data.model.Service
 import com.example.lab4.ui.screens.CartScreen
 import com.example.lab4.ui.screens.LoginScreen
+import com.example.lab4.ui.screens.RegisterScreen
 import com.example.lab4.ui.screens.ServiceDetailScreen
 import com.example.lab4.ui.screens.ServiceListScreen
 import com.example.lab4.ui.viewmodel.CartViewModel
@@ -16,6 +17,7 @@ import com.example.lab4.ui.viewmodel.ServiceViewModel
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
+    object Register : Screen("register")
     object ServiceList : Screen("serviceList")
     object ServiceDetail : Screen("serviceDetail/{serviceId}") {
         fun createRoute(serviceId: Long) = "serviceDetail/$serviceId"
@@ -39,6 +41,22 @@ fun AppNavigation(
                     navController.navigate(Screen.ServiceList.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
+                },
+                onRegisterClick = {
+                    navController.navigate(Screen.Register.route)
+                }
+            )
+        }
+
+        composable(Screen.Register.route) {
+            RegisterScreen(
+                onRegisterClick = {
+                    navController.navigate(Screen.ServiceList.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onBackToLoginClick = {
+                    navController.popBackStack()
                 }
             )
         }

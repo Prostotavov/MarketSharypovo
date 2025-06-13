@@ -9,12 +9,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoginScreen(
-    onLoginClick: () -> Unit,
-    onRegisterClick: () -> Unit
+fun RegisterScreen(
+    onRegisterClick: () -> Unit,
+    onBackToLoginClick: () -> Unit
 ) {
-    var login by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -24,15 +26,24 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Вход в систему",
+            text = "Регистрация",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
         OutlinedTextField(
-            value = login,
-            onValueChange = { login = it },
-            label = { Text("Логин") },
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Имя") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        )
+
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
@@ -45,23 +56,33 @@ fun LoginScreen(
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        )
+
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            label = { Text("Подтвердите пароль") },
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(bottom = 32.dp)
         )
 
         Button(
-            onClick = onLoginClick,
+            onClick = onRegisterClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         ) {
-            Text("Войти")
+            Text("Зарегистрироваться")
         }
 
         TextButton(
-            onClick = onRegisterClick,
+            onClick = onBackToLoginClick,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Нет аккаунта? Зарегистрироваться")
+            Text("Уже есть аккаунт? Войти")
         }
     }
 } 
