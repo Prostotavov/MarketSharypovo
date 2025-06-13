@@ -8,12 +8,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.lab4.data.model.Service
 import com.example.lab4.ui.screens.CartScreen
+import com.example.lab4.ui.screens.LoginScreen
 import com.example.lab4.ui.screens.ServiceDetailScreen
 import com.example.lab4.ui.screens.ServiceListScreen
 import com.example.lab4.ui.viewmodel.CartViewModel
 import com.example.lab4.ui.viewmodel.ServiceViewModel
 
 sealed class Screen(val route: String) {
+    object Login : Screen("login")
     object ServiceList : Screen("serviceList")
     object ServiceDetail : Screen("serviceDetail/{serviceId}") {
         fun createRoute(serviceId: Long) = "serviceDetail/$serviceId"
@@ -29,8 +31,18 @@ fun AppNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.ServiceList.route
+        startDestination = Screen.Login.route
     ) {
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onLoginClick = {
+                    navController.navigate(Screen.ServiceList.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable(Screen.ServiceList.route) {
             ServiceListScreen(
                 viewModel = serviceViewModel,
