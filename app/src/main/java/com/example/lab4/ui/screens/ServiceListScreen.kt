@@ -22,7 +22,8 @@ import com.example.lab4.ui.viewmodel.SortOrder
 fun ServiceListScreen(
     viewModel: ServiceViewModel,
     onServiceClick: (Service) -> Unit,
-    onCartClick: () -> Unit
+    onCartClick: () -> Unit,
+    onProfileClick: () -> Unit
 ) {
     var showCategoryMenu by remember { mutableStateOf(false) }
     var showSortMenu by remember { mutableStateOf(false) }
@@ -36,6 +37,9 @@ fun ServiceListScreen(
             TopAppBar(
                 title = { Text("Услуги") },
                 actions = {
+                    IconButton(onClick = onProfileClick) {
+                        Icon(Icons.Default.Person, contentDescription = "Профиль")
+                    }
                     IconButton(onClick = onCartClick) {
                         Icon(Icons.Default.ShoppingCart, contentDescription = "Корзина")
                     }

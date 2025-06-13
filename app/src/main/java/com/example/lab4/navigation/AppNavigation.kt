@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import com.example.lab4.data.model.Service
 import com.example.lab4.ui.screens.CartScreen
 import com.example.lab4.ui.screens.LoginScreen
+import com.example.lab4.ui.screens.ProfileScreen
 import com.example.lab4.ui.screens.RegisterScreen
 import com.example.lab4.ui.screens.ServiceDetailScreen
 import com.example.lab4.ui.screens.ServiceListScreen
@@ -23,6 +24,7 @@ sealed class Screen(val route: String) {
         fun createRoute(serviceId: Long) = "serviceDetail/$serviceId"
     }
     object Cart : Screen("cart")
+    object Profile : Screen("profile")
 }
 
 @Composable
@@ -69,6 +71,9 @@ fun AppNavigation(
                 },
                 onCartClick = {
                     navController.navigate(Screen.Cart.route)
+                },
+                onProfileClick = {
+                    navController.navigate(Screen.Profile.route)
                 }
             )
         }
@@ -90,6 +95,19 @@ fun AppNavigation(
         composable(Screen.Cart.route) {
             CartScreen(
                 cartViewModel = cartViewModel,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Screen.Profile.route) {
+            ProfileScreen(
+                onLogoutClick = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.ServiceList.route) { inclusive = true }
+                    }
+                },
                 onBackClick = {
                     navController.popBackStack()
                 }
