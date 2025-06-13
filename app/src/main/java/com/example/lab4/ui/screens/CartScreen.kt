@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.lab4.data.UserBalance
 import com.example.lab4.data.model.Service
 import com.example.lab4.ui.viewmodel.CartViewModel
 
@@ -25,7 +26,9 @@ fun CartScreen(
 ) {
     val cartServices by cartViewModel.cartServices.collectAsState()
     val totalPrice by cartViewModel.totalPrice.collectAsState()
+    val balance by UserBalance.balance.collectAsState()
     var showClearCartDialog by remember { mutableStateOf(false) }
+    var showInsufficientFundsDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -112,11 +115,31 @@ fun CartScreen(
                             )
                         }
 
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "Ваш баланс: ${String.format("%.2f", balance)} ₽",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = if (balance >= totalPrice) 
+                                MaterialTheme.colorScheme.primary 
+                            else 
+                                MaterialTheme.colorScheme.error
+                        )
+
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Button(
-                            onClick = { /* TODO: Implement checkout */ },
-                            modifier = Modifier.fillMaxWidth()
+                            onClick = {
+                                if (balance >= totalPrice) {
+                                    UserBalance.subtractAmount(totalPrice)
+                                    cartViewModel.clearCart()
+                                    onBackClick()
+                                } else {
+                                    showInsufficientFundsDialog = true
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = balance >= totalPrice
                         ) {
                             Icon(
                                 Icons.Default.ShoppingCart,
@@ -149,6 +172,19 @@ fun CartScreen(
             dismissButton = {
                 TextButton(onClick = { showClearCartDialog = false }) {
                     Text("Отмена")
+                }
+            }
+        )
+    }
+
+    if (showInsufficientFundsDialog) {
+        AlertDialog(
+            onDismissRequest = { showInsufficientFundsDialog = false },
+            title = { Text("Недостаточно средств") },
+            text = { Text("На вашем балансе недостаточно средств для оформления заказа.") },
+            confirmButton = {
+                TextButton(onClick = { showInsufficientFundsDialog = false }) {
+                    Text("Понятно")
                 }
             }
         )

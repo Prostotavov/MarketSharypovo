@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.lab4.data.UserBalance
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -15,6 +16,8 @@ fun ProfileScreen(
     onLogoutClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
+    val balance by UserBalance.balance.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -34,7 +37,7 @@ fun ProfileScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Здесь можно добавить информацию о пользователе
+            // Информация о пользователе
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -53,6 +56,12 @@ fun ProfileScreen(
                     Text(
                         text = "user@example.com",
                         style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Баланс: ${String.format("%.2f", balance)} ₽",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
