@@ -103,7 +103,7 @@ fun ServiceListScreen(
                 )
                 ServiceCategory.values().forEach { category ->
                     DropdownMenuItem(
-                        text = { Text(category.name) },
+                        text = { Text(category.displayName) },
                         onClick = {
                             viewModel.setCategory(category)
                             showCategoryMenu = false
